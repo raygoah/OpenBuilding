@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Open Building</title>
+        <meta name="keywords" content="OpenBuilding" />
+        <meta name="description" content="Make it easy to design a house settings and share your design with others" />
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+        <script
+  		    src="https://code.jquery.com/jquery-3.1.1.min.js"
+  		    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  		    crossorigin="anonymous">
+	    </script>
+	    <script src="semantic/dist/semantic.min.js"></script>
+    </head>
+	<body>
+		<div class="ui inverted vertical center aligned segment main">
+			<!-- navbar -->
+            <div class="ui container">
+				<div class="ui massive borderless inverted menu">
+					<h1 class="header item">OpenBuilding</h1>
+					<div class="right item">
+						<div class="ui massive secondary inverted pointing menu stackable">
+							<a id="home_btn" class="active item">Home</a>
+                            <a id="about_btn" class="item">About</a>
+							<a id="design_btn" class="item">Design</a>
+							<a id="contact_btn" class="item">Contact</a>
+						</div>
+					</div>
+        		</div>
+			</div>
+
+            <!-- main page -->
+			<div id="main_page">
+                <div class="ui text container">
+                    <h1 class="ui inverted header">Design and Share</h1>
+                    <p>make it easy to have an amazing interior design</p>
+                </div>
+            </div>
+
+            <!-- footer --> 
+			<div class="ui inverted vertical footer segment">
+			    <a>&copy; OpenBuilding Team. All right reserved. Design: semantic-ui template</a>
+            </div>
+		</div>
+
+		<style type="text/css">
+			body {
+                background-image: url(./assets/image/background.jpeg) !important;
+				background-size: cover;
+                background-attachment: fixed;
+                height: 100%;
+			    overflow-y: scroll;
+            }
+            .ui.inverted.segment {
+                background: transparent;
+            }
+            .ui.container {
+                width: 80%;
+            }
+
+			.ui.inverted.vertical.segment h1.header.item {
+				font-size: 2em;
+			}
+			.ui.inverted.vertical.segment a.item {
+				font-size: 1.2em;
+			}
+
+            div#main_page {
+                margin: 0px auto;
+                margin-top: 3rem;
+                margin-bottom: 3rem;
+                width: 60%;
+            }
+            .ui.segment.about {
+                text-color: black;
+                text-align: left;
+                padding: 2rem;
+                background:rgba(255,255,255,0.8);
+            }
+            .ui.segment.about .title img {
+				width: 14rem;
+				height: 14rem;
+            }
+            .ui.segment.about .member img {
+                width: 15rem;
+                height: 15rem;
+            }
+            .nine.wide.column {
+                margin: auto;
+            }
+			.img.four.wide.column {
+				margin: auto;
+			}
+
+            .row.centered.member h1 {
+                font-size: 2.3rem;
+                color: #5F4200;
+            }
+            .row.member {
+                margin-top: 1rem;
+            }
+            .member img {
+                opacity: 1;
+            }
+            .seven.wide.column.introduction {
+                line-height: 100%;
+                margin: auto;
+            }
+            .row.title h2 {
+                font-size: 2.7em;
+                margin: 1rem auto;
+                color: #5F4200;
+            }
+            .row.title p {
+                font-size: 1.4rem;
+            }
+            .ui.segment.about h3 {
+                font-size: 1.6em;
+            }
+            .row.member p {
+               font-size: 1.15rem; 
+            }
+			.ui.inverted.vertical.segment .ui.text.container {
+                margin: 0 auto;
+                margin-top: 16rem;
+            }
+			.ui.inverted.vertical.segment .ui.text.container h1.header {
+				font-size: 5.5em;
+                color: #5F4200;
+                text-shadow: #FFFFFF 0px 0px 10px;
+			}
+			.ui.inverted.vertical.segment .ui.text.container p {
+				font-size: 1.5em;
+				line-height: 1.5;
+                color: #5F4200;
+                text-shadow: #FFFFFF 0px 0px 10px;
+			}
+			.ui.inverted.vertical.segment .ui.footer.segment {
+				height: 40px;
+				width: 100%;
+				position: fixed;
+				bottom: 0;
+				font-size: 1em;
+				background: gray;
+                vertical-align: middle;
+                padding: 0;
+                line-height: 40px;
+                opacity: 0.7;
+			}
+			.ui.inverted.vertical.segment .ui.footer.segment a {
+                color: white;
+			}
+		</style>
+        <script src="assets/js/main.js"></script>
+	</body>
+</html>
