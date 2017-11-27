@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Design</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+        <script
+  		    src="https://code.jquery.com/jquery-3.1.1.min.js"
+  		    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  		    crossorigin="anonymous">
+	    </script>
+	    <script src="semantic/dist/semantic.min.js"></script>
+    </head>
+	
+    <body class="loading">
+        <div class="ui grid parent">
+            <div class="row">
+                <div class="ui action input search">
+			        <input type="text" placeholder="Search">
+			        <select class="ui compact selection dropdown">
+				        <option selected="" value="tag">Tag</option>
+				        <option value="author">Author</option>
+			        </select>
+			        <div type="text" class="ui blue button">Search</div>
+		        </div>
+            </div>
+		</div>
+		
+		<style type="text/css">
+			body {
+                background: #EEEEEE;
+				background-size: cover;
+                background-attachment: fixed;
+                height: 100%;
+			    overflow-y: scroll;
+                margin: 2rem;
+            }
+
+            .ui.search {
+            	position: absolute;
+				left: 50%;
+				transform: translateX(-50%); 
+            }
+        </style>
+        <script src="./assets/js/main.js"></script>
+    </body>
+</html>
