@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Design</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+        <script
+  		    src="https://code.jquery.com/jquery-3.1.1.min.js"
+  		    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  		    crossorigin="anonymous">
+	    </script>
+	    <script src="semantic/dist/semantic.min.js"></script>
+    </head>
+
+    <body>
+        <!-- main button -->
+        <div class="btn stackable ui centered grid">
+            <div class="row">
+                <a class="create" href="./newDesign/index.html">
+                    <img src="./assets/image/create_btn.png"></img>    
+                </a>
+                <a class="community" href="">
+                    <img src="./assets/image/community_btn.png">
+                </a>
+                <a class="search" href="./search.html">
+                    <img src="./assets/image/search_btn.png">
+                </a>
+            </div>
+        </div>
+        
+        <!-- login / register btn -->
+        <div class="logreg_btn">
+            <!-- login success -->
+            
+            <!-- unlogin -->
+            <button id="login_btn" class="ui grey button">
+                <i class="icon user"></i>Login
+            </button>
+        
+            <button id="register_btn" class="ui grey button">
+                <i class="icon add user"></i>Register
+            </button>
+        </div>
+
+        <!-- login modal -->
+        <div id="login_modal" class="ui modal">
+            <i class="close icon"></i>
+            <div>
+                <img src="./assets/image/logo.png" />
+				<form id="login_form" class="ui form" autocomplete="off">
+					<div class="field">
+						<label>Account</label>
+						<input id="login_account" type="text" placeholder="account" required />
+					</div>
+					<div class="field">
+						<label>Password</label>
+						<input type="password" id="login_password" placeholder="password" required />
+					</div>
+					<button id="login_send" class="ui button">Submit</button>
+                    <div class="social_btn">
+                        <p align=center>New to us? <a id="reg_link">Sign Up</a></p>
+                        <hr>
+                        <button class="ui facebook button">
+                            <i class="facebook icon"></i>
+                            Facebook
+                        </button>
+                        <button class="ui google plus button">
+                            <i class="google icon"></i>
+                            Google
+                        </button>
+                    </div>
+				</form> 
+            </div>
+        </div>
+
+        <!-- register modal -->
+        <div id="reg_modal" class="ui modal">
+            <i class="close icon"></i>
+            <div>
+				<form id="reg_form" class="ui form" autocomplete="off">
+					<div align="center" style="margin: 2rem auto;">
+                        <i class="huge icons">
+                            <i class="big thin circle icon"></i>
+                            <i class="user icon"></i>
+                        </i>
+                    </div>
+                    <div class="field">
+						<label>Account</label>
+						<input id="reg_account" type="text" placeholder="account" required />
+					</div>
+					<div class="field">
+						<label>Password</label>
+						<input type="password" id="reg_password" placeholder="password" required />
+					</div>
+					<div class="field">
+						<label>Nickname</label>
+						<input type="text" id="reg_nickname" placeholder="nickname" required />
+					</div>
+					<div class="field">
+						<label>Email</label>
+						<input type="text" id="reg_email" placeholder="email" required />
+					</div>
+					<button id="reg_send" class="ui secondary button" style="margin-top: 1rem;">Submit</button>
+				</form> 
+            </div>
+        </div>
+
+        <!-- footer --> 
+		<div class="ui inverted vertical footer segment">
+			<a>&copy; OpenBuilding Team. All right reserved.</a>
+        </div>
+        
+        <style type="text/css">
+			body {
+                background: #EEEEEE;
+                background-attachment: fixed;
+                height: 100%;
+            }
+            
+            .logreg_btn {
+                position: absolute;
+                width: 25rem;
+                left: 70%;
+                top: 2rem;
+            }
+
+            #login_btn {
+                width: 9rem;
+                margin-left: 1rem;
+            }
+
+            #register_btn {
+                width: 9rem;
+                margin-left: 1rem;
+            }
+
+            div.btn.stackable.ui.centered.grid, 
+            div.row {
+                margin: 0px;
+                padding: 0;
+                height: 95%;
+                line-height: 95%;
+                text-align: center;
+            }
+            
+            div > a {
+                position: relative;
+                height: 20rem;
+                width: 20rem;
+                padding: 0;
+                margin: 0 5rem;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            
+            div > a > img {
+                height: 20rem;
+                width: 20rem;
+            }
+
+			div.ui.footer.segment {
+				position: fixed;
+				height: 5%;
+				width: 100%;
+				bottom: 0;
+				font-size: 1em;
+                line-height: 5%;
+                opacity: 0.7;
+                text-align: center;
+            }
+			
+            div.ui.footer.segment a {
+                color: white;
+            }
+
+            div.ui.modal{
+                width: 30%;
+                padding: 2rem;
+                margin-left: -15%;
+            }
+
+            div#login_modal {
+                height: 38rem;
+            }
+
+            div#reg_modal {
+                height: 40rem;
+            }
+           
+            div.ui.modal > div > form > button {
+                width: 100%;
+            }
+
+            div.social_btn {
+                margin-top: 1rem;
+                text-align: center;
+            }
+
+            div#login_modal > div > form > div.social_btn > button.facebook,
+            div#login_modal > div > form > div.social_btn > button.google {
+                width: 10rem;
+                margin: 5px 1rem;
+            }
+
+            div#login_modal > div > img {
+                display:block; 
+                margin: auto;
+                width: 12rem;
+                height: 12rem;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+
+        </style>
+        <script src="./assets/js/main.js"></script>
+    </body>
+</html>
