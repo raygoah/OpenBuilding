@@ -1,16 +1,28 @@
 const express = require('express')
+const https = require('https')
 const fs = require('fs');
 const bodyParser = require('body-parser')
 const app = express()
 const port = 8181
 const MongoClient = require('mongodb').MongoClient;
-const dbPath = "mongodb://your_db_account:your_db_pwd@your_db_ip:27017/your_db_name";
+const dbPath = "mongodb://your_db_ account:your_db_pwd@your_db_ip:27017/your_db_name";
 
-app.listen(port)
+/* https setting */
+const privateKey = fs.readFileSync('your_ssl_privateKey', 'utf8')
+const certificate = fs.readFileSync('your_ssl_certificate', 'utf8')
+const CA = fs.readFileSync('your_ssl_ca')
+const credential = {ca: CA, key: privateKey, cert: certificate}
+
+httpsServer = https.createServer(credential, app)
+
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+httpsServer.listen(port, function () {
+  console.log('listening on port 8181')
+})
 
 app.post('/login', function(req, res) {
     var account = req.body['account'];
