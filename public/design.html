@@ -12,7 +12,7 @@
 	    <script src="semantic/dist/semantic.min.js"></script>
     </head>
 
-    <body>
+    <body onload="checkCookie()">
         <!-- main button -->
         <div class="btn stackable ui centered grid">
             <div class="row">
@@ -30,16 +30,6 @@
         
         <!-- login / register btn -->
         <div class="logreg_btn">
-            <!-- login success -->
-            
-            <!-- unlogin -->
-            <button id="login_btn" class="ui grey button">
-                <i class="icon user"></i>Login
-            </button>
-        
-            <button id="register_btn" class="ui grey button">
-                <i class="icon add user"></i>Register
-            </button>
         </div>
 
         <!-- login modal -->
@@ -112,7 +102,9 @@
         
         <style type="text/css">
 			body {
-                background: #EEEEEE;
+                background-image: url(./assets/image/background1.png) !important;
+                background-repeat:no-repeat;
+                background-size:cover;
                 background-attachment: fixed;
                 height: 100%;
             }
@@ -124,7 +116,28 @@
                 top: 2rem;
             }
 
+			div#username {
+  				text-align: center;
+                padding: 5px 0;
+                background: rgba(255, 255, 255, 0.8 /* alpha value for background */);
+			}
+
+            div#username p {
+                display: inline-block;
+                font-family: 'Gabriela', serif;
+                color: #000;
+                font-size: 1.5em;
+                padding: 0;
+                margin: 0 auto;
+            }
+
             #login_btn {
+                width: 9rem;
+                margin-left: 1rem;
+            }
+
+            div#username #logout_btn {
+                display: inline-block;
                 width: 9rem;
                 margin-left: 1rem;
             }

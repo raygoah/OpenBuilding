@@ -1,3 +1,72 @@
+window.onload = checkCookie();
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function checkCookie() {
+    var user=getCookie("account");
+    if (user != "") {
+    	// user login;
+		var name = getCookie("nickname");
+        $('.logreg_btn').html(
+            "<div id=\"username\">" +
+                "<p>Welcome " + name + "</p>" + 
+                "<button id=\"logout_btn\" class=\"ui grey button\">" +
+                    "Logout" +
+                "</button>" +
+            "</div>"
+        );
+        
+        $("#logout_btn").click(
+            function() {
+               setCookie("account", "", "nickname", "", 30);
+               checkCookie();
+            }
+        )
+	} else {
+        $('.logreg_btn').html(
+            "<button id=\"login_btn\" class=\"ui grey button\">" +
+                "<i class=\"icon user\"></i>Login" +
+            "</button>" +
+            "<button id=\"register_btn\" class=\"ui grey button\">" +
+                "<i class=\"icon add user\"></i>Register" +
+            "</button>"
+        )
+
+        $("#login_btn").click(
+            function() {
+                $("#login_modal").modal('show');
+            }
+        );
+
+        $("#register_btn").click(
+            function() {
+                $("#reg_modal").modal('show');
+            }
+        );
+	}
+}
+
 $("#home_btn").click(
     function() {
         $.ajax({
@@ -74,10 +143,11 @@ $('#login_send').click(
                     document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
                     document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
                     $('#login_modal').modal('hide');
-                    $('.logreg_btn').html(
-                        "<p id=\"username\">Welcome, " + data['data'].nickname + "</p>" + 
-                        "<button id=\"logout_btn\" class=\"ui grey button\">Logout<i class=\"icon right arrow\"></i></button>"
-                    );
+					setCookie("account", data['data'].account, 30);
+                    setCookie("nickname", data['data'].nickname, 30);
+                    checkCookie();
+                    document.getElementById('login_account').value = "";
+                    document.getElementById('login_password').value = "";
                 }
             },
             error: function(data) {
@@ -99,7 +169,6 @@ $('#reg_send').click(
                 email: $('#reg_email').val()
             },
             success: function(data) {
-                console.log(data)
                 if(data['success'] == false) {
                     if(data['account'] == false) {
                         document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
@@ -114,6 +183,14 @@ $('#reg_send').click(
                     document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
                     document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
                     $('#reg_modal').modal('hide');
+					setCookie("account", $('#reg_account').val(), 30);
+                    setCookie("nickname", $('#reg_nickname').val(), 30);
+                    checkCookie();
+
+                    document.getElementById('reg_account').value = "";
+                    document.getElementById('reg_password').value = "";
+                    document.getElementById('reg_nickname').value = "";
+                    document.getElementById('reg_email').value = "";
                 }
             },
             error: function(data) {
@@ -150,17 +227,7 @@ $("a.search > img").hover(
     }
 );
 
-$("#login_btn").click(
-    function() {
-        $("#login_modal").modal('show');
-    }
-);
 
-$("#register_btn").click(
-    function() {
-        $("#reg_modal").modal('show');
-    }
-);
 
 $("#reg_link").click(
     function() {
