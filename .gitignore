@@ -1,4 +1,4 @@
 ssl
-server.js
+secret.js
 node_modules
 package-lock.json
