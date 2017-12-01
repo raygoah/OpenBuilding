@@ -109,6 +109,16 @@ $("#about_btn").click(
     }
 )
 
+$(".create").click(
+    function() {
+        var user=getCookie("account");
+        if(user == "")
+            $("#login_modal").modal("show");
+        else
+            window.open("./newDesign/index.html");
+    }
+)
+
 $('#login_form').submit(
     function(e) {
         e.preventDefault();
