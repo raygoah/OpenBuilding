@@ -148,36 +148,43 @@ app.post('/register', function(req, res) {
                 db.close();
             } else {
                 db.collection("user").find({
-                    email: email
                 }).toArray(function(err1, result1) {
-                    if(err1) throw err1
-                    if(result1 != 0) {
-                        res.send({
-                            success: false,
-                            account: true,
-                            email: false
-                        })
-                        db.close();
-                    } else {
-                        db.close();
-                        MongoClient.connect(dbPath, function (err1, db1) {
-                            if(err1) throw err1;
-   	                        db1.collection("user").insertOne({
-  	                            account: account,
-                                password: pwd,
-                                email: email,
-                                nickname: nickname
-                            }, function(err2, res1) {
-                                if(err2) throw err2
-                                else {
-                                    res.send({
-                                        success: true
-                                    })
-                                }
-                            });
-                            db1.close();
-	                    });
-                    }
+                    if (err1) throw err1;
+                    var len = result1.length + 1;
+
+                    db.collection("user").find({
+                        email: email
+                    }).toArray(function(err2, result2) {
+                        if(err2) throw err2;
+                        if(result2 != 0) {
+                            res.send({
+                                success: false,
+                                account: true,
+                                email: false
+                            })
+                            db.close();
+                        } else {
+                            db.close();
+                            MongoClient.connect(dbPath, function (err1, db1) {
+                                if(err1) throw err1;
+   	                            db1.collection("user").insertOne({
+  	                                account: account,
+                                    password: pwd,
+                                    email: email,
+                                    nickname: nickname,
+                                    user_id: len
+                                }, function(err2, res1) {
+                                    if(err2) throw err2
+                                    else {
+                                        res.send({
+                                            success: true
+                                        })
+                                    }
+                                });
+                                db1.close();
+	                        });
+                        }
+                    });
                 });
             }
   		});
