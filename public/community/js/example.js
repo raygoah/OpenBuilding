@@ -550,6 +550,7 @@ $(document).ready(function() {
     dataType: "json",
     success: function(data){
       var community = data['file'];
+      console.log(community);
       blueprint3d.model.loadJSON(community);//將回傳有新增家具的房子更新
     },
     error: function(data){

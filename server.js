@@ -2,24 +2,44 @@ const express = require('express')
 const https = require('https')
 const fs = require('fs')
 const secret = require('./secret.js') /* ssl and DB info */
+const Design = require('./dbOperation.js')
 const bodyParser = require('body-parser')
+const await = require('await')
 const app = express()
-const port = 8181
+const port = 8181 
 const MongoClient = require('mongodb').MongoClient;
 const dbPath = secret.dbPath;
 
 /* https setting */
 const credential = {ca: secret.CA, key: secret.privateKey, cert: secret.certificate}
 
-httpsServer = https.createServer(credential, app)
-
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+httpsServer = https.createServer(credential, app)
 httpsServer.listen(port, function () {
   console.log('listening on port 8181')
+})
+
+app.post("/newDesign", function (req, res) {
+  var account = req.body['account'];
+  Design.getDesign(account).then((design) => {
+    res.send({
+      file: JSON.parse(design)
+    })
+  });
+})
+
+app.post("/updateDesign", function (req, res) {
+  var account = req.body['account'];
+  var design = req.body['design'];
+  Design.saveDesign(account, design).then((result) => {
+    res.send("Success!");
+  }).catch((e) => {
+    res.send("Fail!");
+  });
 })
 
 app.post('/renew',function(req, res){
@@ -45,12 +65,36 @@ app.post('/renew',function(req, res){
                                 file: Group_obj							
                             })
                         } else {//需要更新社區時
+
+                            var corner_is_in = false
+                            var wall_is_in = false
+
                             for (i = 0; i < result2.length; ++i) {
                                 var design = JSON.parse(result2[i].design);
                                 for (j = 0; j < design.items.length; ++j) {
                                     Group_obj.items.push(design.items[j]);
                                 }
+
+                                for (j in design.floorplan.corners) {
+                                    corner_is_in = false
+                                    for (k in Group_obj.floorplan.corners)
+                                        if (j == k)
+                                            corner_is_in = true
+                                    if (!corner_is_in)
+                                        Group_obj.floorplan.corners[j] = {"x":design.floorplan.corners[j].x, "y": design.floorplan.corners[j].y}
+                                }
+
+                                for (j = 0; j < design.floorplan.walls.length; j++) {
+                                    wall_is_in = false
+                                    for (k = 0; k < Group_obj.floorplan.walls.length; k++)
+                                        if (design.floorplan.walls[j].corner1 == Group_obj.floorplan.walls[k].corner1)
+                                            if (design.floorplan.walls[j].corner2 == Group_obj.floorplan.walls[k].corner2)
+                                                wall_is_in = true
+                                    if (!wall_is_in)
+                                        Group_obj.floorplan.walls.push(design.floorplan.walls[j])
+                                }
                             }
+
                             res.send({
                                 file: Group_obj
                             })
@@ -97,11 +141,15 @@ app.post('/login', function(req, res) {
     var pwd = req.body['pwd'];
     
     MongoClient.connect(dbPath, function (err, db) {
-        if(err) throw err;
-   		db.collection("user").find({
-           account: account
-        }).toArray(function(err, result) {
-    		if (err) throw err;
+   		var promise = new Promise(function(resolve, reject) {
+            db.collection("user").find({
+            account: account
+            }).toArray(function(err, result) {
+                if(err) reject(err);
+                else resolve(result);
+            });
+        });
+        promise.then(function(result) {
             if(result == 0) {
                 res.send({
                     success: false,
@@ -123,7 +171,9 @@ app.post('/login', function(req, res) {
                 }
             }
             db.close();
-  		});
+  		}).catch(function(err) {
+            throw err;
+        });
 	});
 })
 
@@ -132,14 +182,21 @@ app.post('/register', function(req, res) {
     var pwd = req.body['pwd'];
     var nickname = req.body['nickname'];
     var email = req.body['email'];
+    var user_id;
 
     MongoClient.connect(dbPath, function (err, db) {
         if(err) throw err;
-   		
-        db.collection("user").find({
-           account: account
-        }).toArray(function(err, result) {
-            if(err) throw err;
+        
+        var promise = new Promise(function(resolve, reject) {
+            db.collection("user").find({
+                account: account
+            }).toArray(function(err, result) {
+                if(err) reject(err);
+                else resolve(result);
+            });
+        });
+        
+        promise.then(function(result) {
             if(result != 0) {
                 res.send({
                     success: false,
@@ -147,46 +204,48 @@ app.post('/register', function(req, res) {
                 })
                 db.close();
             } else {
-                db.collection("user").find({
-                }).toArray(function(err1, result1) {
-                    if (err1) throw err1;
-                    var len = result1.length + 1;
-
+                return new Promise(function(resolve, reject) {
                     db.collection("user").find({
-                        email: email
-                    }).toArray(function(err2, result2) {
-                        if(err2) throw err2;
-                        if(result2 != 0) {
-                            res.send({
-                                success: false,
-                                account: true,
-                                email: false
-                            })
-                            db.close();
-                        } else {
-                            db.close();
-                            MongoClient.connect(dbPath, function (err1, db1) {
-                                if(err1) throw err1;
-   	                            db1.collection("user").insertOne({
-  	                                account: account,
-                                    password: pwd,
-                                    email: email,
-                                    nickname: nickname,
-                                    user_id: len
-                                }, function(err2, res1) {
-                                    if(err2) throw err2
-                                    else {
-                                        res.send({
-                                            success: true
-                                        })
-                                    }
-                                });
-                                db1.close();
-	                        });
-                        }
+                    }).toArray(function(err, result) {
+                        user_id = result.length + 1;
+                        resolve(user_id);
                     });
                 });
             }
-  		});
+        }).then(function(user_id) {
+            return new Promise(function(resolve, reject) {
+                db.collection("user").find({
+                    email: email
+                }).toArray(function(err, result) {
+                    resolve(result);
+                });
+            });
+        }).then(function(result) {
+            db.close();
+            if(result != 0) {
+                res.send({
+                    success: false,
+                    account: true,
+                    email: false
+                })
+            } else {
+                MongoClient.connect(dbPath, function (err, db) {
+                    db.collection("user").insertOne({
+  	                    account: account,
+                        password: pwd,
+                        email: email,
+                        nickname: nickname,
+                        user_id: user_id
+                    }, function(err1, res1) {
+                        res.send({
+                            success: true
+                        })
+                    });
+                    db.close();
+	            });
+            }
+        }).catch(function(err) {
+            console.log(err);
+        });
 	});
 });

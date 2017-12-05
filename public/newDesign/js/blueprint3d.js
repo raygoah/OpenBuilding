@@ -2547,6 +2547,14 @@ var BP3D;
                 this.newRoom(data.floorplan, data.items);
                 this.roomLoadedCallbacks.fire();
             };
+            Model.prototype.loadJSON = function (json) {
+                // TODO: better documentation on serialization format.
+                // TODO: a much better serialization format.
+                this.roomLoadingCallbacks.fire();
+                //var data = JSON.parse(json);
+                this.newRoom(json.floorplan, json.items);
+                this.roomLoadedCallbacks.fire();
+            };
             Model.prototype.exportSerialized = function () {
                 var items_arr = [];
                 var objects = this.scene.getItems();
@@ -3924,9 +3932,9 @@ var BP3D;
             var topColor = 0xffffff; //0xD8ECF9
             var bottomColor = 0xe9e9e9; //0xf9f9f9;//0x565e63
             var verticalOffset = 500;
-            var sphereRadius = 4000;
+            var sphereRadius = 4000000;
             var widthSegments = 32;
-            var heightSegments = 15;
+            var heightSegments = 15;        
             var vertexShader = [
                 "varying vec3 vWorldPosition;",
                 "void main() {",
@@ -3961,7 +3969,7 @@ var BP3D;
                     }
                 };
                 var skyGeo = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
-                var skyMat = new THREE.ShaderMaterial({
+                var skyMat = new THREE.ShaderMaterial({                    
                     vertexShader: vertexShader,
                     fragmentShader: fragmentShader,
                     uniforms: uniforms,
@@ -4005,7 +4013,7 @@ var BP3D;
             this.zoomSpeed = 1.0;
             // Limits to how far you can dolly in and out
             this.minDistance = 0;
-            this.maxDistance = 1500; //Infinity;
+            this.maxDistance = 400000; //Infinity;
             // Set to true to disable this control
             this.noRotate = false;
             this.rotateSpeed = 1.0;
@@ -4018,7 +4026,7 @@ var BP3D;
             // How far you can orbit vertically, upper and lower limits.
             // Range is 0 to Math.PI radians.
             this.minPolarAngle = 0; // radians
-            this.maxPolarAngle = Math.PI / 2; // radians
+            this.maxPolarAngle = Math.PI / 2 ; // radians
             // Set to true to disable use of the keys
             this.noKeys = false;
             // The four arrow keys
@@ -4584,7 +4592,7 @@ var BP3D;
             function init() {
                 THREE.ImageUtils.crossOrigin = "";
                 domElement = scope.element.get(0); // Container
-                camera = new THREE.PerspectiveCamera(45, 1, 1, 10000);
+                camera = new THREE.PerspectiveCamera(45, 1, 1, 10000000);
                 renderer = new THREE.WebGLRenderer({
                     antialias: true,
                     preserveDrawingBuffer: true // required to support .toDataURL()
@@ -4592,6 +4600,7 @@ var BP3D;
                 renderer.autoClear = false,
                     renderer.shadowMapEnabled = true;
                 renderer.shadowMapSoft = true;
+                renderer.setClearColor(0xffffff);
                 renderer.shadowMapType = THREE.PCFSoftShadowMap;
                 var skybox = new Three.Skybox(scene);
                 scope.controls = new Three.Controls(camera, domElement);

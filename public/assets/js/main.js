@@ -114,7 +114,7 @@ $(".create").click(
         var user=getCookie("account");
         if(user == "")
             $("#login_modal").modal("show");
-        else
+        else 
             window.open("./newDesign/index.html");
     }
 )

@@ -1,0 +1,28 @@
+{
+  "name": "openbuilding",
+  "version": "1.0.0",
+  "description": "We are a team from National Cheng Kung University, and we want to implement a website where people can design the interior of any building. In our project, we refer [https://github.com/furnishup/blueprint3d](https://github.com/furnishup/blueprint3d) and make a platform for everyone to share their designs.",
+  "main": "server.js",
+  "dependencies": {
+    "await": "^0.2.6",
+    "express": "^4.16.2",
+    "mongodb": "^2.2.33",
+    "promise": "^8.0.1",
+    "webpack": "^3.8.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raygoah/OpenBuilding.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raygoah/OpenBuilding/issues"
+  },
+  "homepage": "https://github.com/raygoah/OpenBuilding#readme"
+}
