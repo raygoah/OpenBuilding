@@ -579,8 +579,11 @@ $(document).ready(function() {
       account: user 
     },
     success: function (data) {
-      console.log(data["file"]);
-      blueprint3d.model.loadJSON(data["file"]);
+      //console.log(data["file"]);
+      if (data["success"] == true)
+        blueprint3d.model.loadJSON(data["file"]);
+      else
+        alert(data["file"]);
     },
     error: function (data) {
       console.log("GG");

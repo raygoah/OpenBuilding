@@ -26,9 +26,17 @@ httpsServer.listen(port, function () {
 app.post("/newDesign", function (req, res) {
   var account = req.body['account'];
   Design.getDesign(account).then((design) => {
-    res.send({
-      file: JSON.parse(design)
-    })
+    if (design === "House sold out!") {
+      res.send({
+        success: false,
+        file: design
+      })
+    } else {
+      res.send({
+        success: true,
+        file: JSON.parse(design)
+      })
+    }
   });
 })
 
