@@ -211,6 +211,9 @@ app.post('/register', function(req, res) {
                     account: false
                 })
                 db.close();
+                return new Promise(function(resolve, reject) {
+                    resolve(-1);
+                });
             } else {
                 return new Promise(function(resolve, reject) {
                     db.collection("user").find({
@@ -221,16 +224,23 @@ app.post('/register', function(req, res) {
                 });
             }
         }).then(function(user_id) {
-            return new Promise(function(resolve, reject) {
-                db.collection("user").find({
-                    email: email
-                }).toArray(function(err, result) {
-                    resolve(result);
+            if(user_id == -1) {
+                return new Promise(function(resolve, reject) {
+                    resolve(-1);
                 });
-            });
+            } else {
+                return new Promise(function(resolve, reject) {
+                    db.collection("user").find({
+                        email: email
+                    }).toArray(function(err, result) {
+                        resolve(result);
+                    });
+                });
+            }
         }).then(function(result) {
             db.close();
-            if(result != 0) {
+            if(result == -1) {
+            } else if(result != 0) {
                 res.send({
                     success: false,
                     account: true,
@@ -256,4 +266,61 @@ app.post('/register', function(req, res) {
             console.log(err);
         });
 	});
+});
+
+app.post('/google_login', function(req, res) {
+    var id_token = req.body['id_token'];
+    var nickname = req.body['name'];
+    var email = req.body['email'];
+    var user_id;
+
+    MongoClient.connect(dbPath, function(err, db) {
+        var promise = new Promise(function(resolve, reject) {
+            db.collection("user").find({
+                account: id_token
+            }).toArray(function(err, result) {
+                if(err) reject(err);
+                resolve(result);
+            });
+        });
+    
+        promise.then(function(result) {
+            if(result == 0) {
+                //register
+                return new Promise(function(resolve, reject) {
+                    db.collection("user").find({
+                    }).toArray(function(err, result) {
+                        user_id = result.length + 1;
+                        resolve(user_id);
+                    });
+                });
+            } else {
+                return new Promise(function(resolve, reject) {
+                    resolve(0);
+                });
+            }
+        }).then(function(result) {
+            if(result != 0) {
+                user_id = result;
+                return new Promise(function(resolve, reject) {
+                    db.close();
+                    MongoClient.connect(dbPath, function(err, db) {
+                        db.collection("user").insertOne({
+                            account: id_token,
+                            nickname: nickname,
+                            email: email,
+                            user_id: user_id
+                        }, function(err, result1) {
+                            if(err) reject(err);
+                        });
+                    });
+                });
+            }
+            res.send({
+                success: true
+            });
+        }).catch(function(err) {
+            console.log(err);
+        });
+    });
 });

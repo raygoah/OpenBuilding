@@ -1,3 +1,8 @@
+// Hello.
+//
+// This is The Scripts used for ___________ Theme
+//
+//
 window.onload = checkCookie();
 
 function setCookie(cname, cvalue, exdays) {
@@ -28,94 +33,67 @@ function checkCookie() {
     if (user != "") {
     	// user login;
 		var name = getCookie("nickname");
-        $('.logreg_btn').html(
-            "<div id=\"username\">" +
-                "<p>Welcome " + name + "</p>" + 
-                "<button id=\"logout_btn\" class=\"ui grey button\">" +
-                    "Logout" +
-                "</button>" +
-            "</div>"
-        );
-        
+        document.getElementById('navbar').insertAdjacentHTML('beforeend', '<li><a id=\"logout_btn\">Logout</a></li>');
+
         $("#logout_btn").click(
             function() {
-               setCookie("account", "", "nickname", "", 30);
-               checkCookie();
+                var user=getCookie("account");
+                if(user.length > 30) {
+                    var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut();
+                }
+                setCookie("account", "", "nickname", "", 30);
+                checkCookie();
             }
         )
 	} else {
-        $('.logreg_btn').html(
-            "<button id=\"login_btn\" class=\"ui grey button\">" +
-                "<i class=\"icon user\"></i>Login" +
-            "</button>" +
-            "<button id=\"register_btn\" class=\"ui grey button\">" +
-                "<i class=\"icon add user\"></i>Register" +
-            "</button>"
-        )
-
-        $("#login_btn").click(
-            function() {
-                $("#login_modal").modal('show');
-            }
-        );
-
-        $("#register_btn").click(
-            function() {
-                $("#reg_modal").modal('show');
-            }
-        );
-	}
+        $("li a#logout_btn").remove();	
+    }
 }
 
-$("#home_btn").click(
-    function() {
-        $.ajax({
-            method: "get",
-            url: "./home.html",
-            success: function(data) {
-                $('#main_page').transition('drop');
-                setTimeout(function(){
-                    $("#main_page").html(data);
-                    $('#main_page').transition('drop');
-                }, 300);
-            },
-            error: function(data) {
-                console.log("get home page error")
+function onSignIn(googleUser) {
+	var profile = googleUser.getBasicProfile();
+    $.ajax({
+        method: "post",
+        url: "/google_login",
+        data: {
+            id_token: profile.getId(),
+            name: profile.getName(),
+            email: profile.getEmail()
+        },success: function(data) {
+            if(data['success'] == true) {
+                console.log("login success");
+				setCookie("account", googleUser.getAuthResponse().id_token, 30);
+                setCookie("nickname", profile.getName(), 30);
+                checkCookie();
+                $('#login_modal').modal('hide');
             }
-        })
-        $(".item").removeClass('active')
-        $(this).addClass('active')
-    }
-)
+        },error: function(data) {
+            console.log("google login failed");
+        }
+    })
+    //console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+	//console.log('Name: ' + profile.getName());
+	//console.log('Image URL: ' + profile.getImageUrl());
+	//console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+}
 
-$("#about_btn").click(
-    function() {
-        $.ajax({
-            method: "get",
-            url: "./about.html",
-            success: function(data) {
-                $('#main_page').transition('drop');
-                setTimeout(function(){
-                    $("#main_page").html(data);
-                    $('#main_page').transition('drop');
-                }, 300);
-            },
-            error: function(data) {
-                console.log("get home page error")
-            }
-        })
-        $(".item").removeClass('active')
-        $(this).addClass('active')
-    }
-)
-
-$(".create").click(
+$("#create_btn").click(
     function() {
         var user=getCookie("account");
-        if(user == "")
+        if(user == "") {
             $("#login_modal").modal("show");
-        else 
+            document.getElementById('login_account').value = "";
+            document.getElementById('login_account').value = "";
+        }
+        else
             window.open("./newDesign/index.html");
+    }
+)
+
+$("#community_btn").click(
+    function() { 
+        window.open("./community/index.html");
     }
 )
 
@@ -133,114 +111,214 @@ $('#reg_form').submit(
 
 $('#login_send').click(
     function() {
-        $.ajax({
-            method: "post",
-            url: "/login",
-            data: {
-                account: $('#login_account').val(),
-                pwd: $('#login_password').val()
-            }, 
-            success: function(data) {
-                if(data['success'] == false) {
-                    if(data['account'] == false) {
-                        document.getElementById('login_account').style.backgroundColor = '#FFC1C1';
-                        document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
-                    } else {
-                        document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
-                        document.getElementById('login_password').style.backgroundColor = '#FFC1C1';
-                    }
-                } else {
-                    document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
-                    document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
-                    $('#login_modal').modal('hide');
-					setCookie("account", data['data'].account, 30);
-                    setCookie("nickname", data['data'].nickname, 30);
-                    checkCookie();
-                    document.getElementById('login_account').value = "";
-                    document.getElementById('login_password').value = "";
-                }
-            },
-            error: function(data) {
-                console.log("login error")
-            }
-        })
+		if($('#login_account').val() != "" && $('#login_password').val() != "") {
+			$.ajax({
+				method: "post",
+				url: "/login",
+				data: {
+					account: $('#login_account').val(),
+					pwd: $('#login_password').val()
+				}, 
+				success: function(data) {
+					if(data['success'] == false) {
+						if(data['account'] == false) {
+							document.getElementById('login_account').style.backgroundColor = '#FFC1C1';
+							document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
+						} else {
+							document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
+							document.getElementById('login_password').style.backgroundColor = '#FFC1C1';
+						}
+					} else {
+						document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
+						document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
+						$('#login_modal').modal('hide');
+						setCookie("account", data['data'].account, 30);
+						setCookie("nickname", data['data'].nickname, 30);
+						checkCookie();
+						document.getElementById('login_account').value = "";
+						document.getElementById('login_password').value = "";
+					}
+				},
+				error: function(data) {
+					console.log("register error")
+				}
+			})
+		}
     }
 )
 
 $('#reg_send').click(
     function() {
-        $.ajax({
-            method: "post",
-            url: "/register",
-            data: {
-                account: $('#reg_account').val(),
-                pwd: $('#reg_password').val(),
-                nickname: $('#reg_nickname').val(),
-                email: $('#reg_email').val()
-            },
-            success: function(data) {
-                if(data['success'] == false) {
-                    if(data['account'] == false) {
-                        document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
-                        document.getElementById('reg_account').style.backgroundColor = '#FFC1C1';
-                        document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
-                    } else {
-                        document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
-                        document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
-                        document.getElementById('reg_email').style.backgroundColor = '#FFC1C1';
-                    }
-                } else {
-                    document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
-                    document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
-                    $('#reg_modal').modal('hide');
-					setCookie("account", $('#reg_account').val(), 30);
-                    setCookie("nickname", $('#reg_nickname').val(), 30);
-                    checkCookie();
+		if($('#reg_account').val() != "" && $('#reg_password').val() != "" && $('#reg_nickname').val() != "" &&  $('#reg_email').val() != "") {
+			$.ajax({
+				method: "post",
+				url: "/register",
+				data: {
+					account: $('#reg_account').val(),
+					pwd: $('#reg_password').val(),
+					nickname: $('#reg_nickname').val(),
+					email: $('#reg_email').val()
+				},
+				success: function(data) {
+					if(data['success'] == false) {
+						if(data['account'] == false) {
+							document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
+							document.getElementById('reg_account').style.backgroundColor = '#FFC1C1';
+							document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
+						} else {
+							document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
+							document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
+							document.getElementById('reg_email').style.backgroundColor = '#FFC1C1';
+						}
+					} else {
+						document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
+						document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
+						$('#reg_modal').modal('hide');
+						setCookie("account", $('#reg_account').val(), 30);
+						setCookie("nickname", $('#reg_nickname').val(), 30);
+						checkCookie();
 
-                    document.getElementById('reg_account').value = "";
-                    document.getElementById('reg_password').value = "";
-                    document.getElementById('reg_nickname').value = "";
-                    document.getElementById('reg_email').value = "";
-                }
-            },
-            error: function(data) {
-                console.log("register error")
-            }
-        })
+						document.getElementById('reg_account').value = "";
+						document.getElementById('reg_password').value = "";
+						document.getElementById('reg_nickname').value = "";
+						document.getElementById('reg_email').value = "";
+					}
+				},
+				error: function(data) {
+					console.log("register error")
+				}
+			})
+		}
     }
 )
 
-$("a.create > img").hover(
-    function() {
-        $(this).attr("src", "./assets/image/create_btn_hover.png");
-    },
-    function() {
-        $(this).attr("src", "./assets/image/create_btn.png");
-    }
-);
-
-$("a.community > img").hover(
-    function() {
-        $(this).attr("src", "./assets/image/community_btn_hover.png");
-    },
-    function() {
-        $(this).attr("src", "./assets/image/community_btn.png");
-    }
-);
-
-$("a.search > img").hover(
-    function() {
-        $(this).attr("src", "./assets/image/search_btn_hover.png");
-    },
-    function() {
-        $(this).attr("src", "./assets/image/search_btn.png");
-    }
-);
-
-
-
 $("#reg_link").click(
     function() {
+        $("#login_modal").modal('hide');
         $("#reg_modal").modal('show');
     }
 );
+
+
+function main() {
+
+(function () {
+   'use strict';
+
+   /* ==============================================
+  	Testimonial Slider
+  	=============================================== */ 
+
+  	$('a.page-scroll').click(function() {
+        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+          if (target.length) {
+            $('html,body').animate({
+              scrollTop: target.offset().top - 40
+            }, 900);
+            return false;
+          }
+        }
+      });
+
+    /*====================================
+    Show Menu on Book
+    ======================================*/
+    $(window).bind('scroll', function() {
+        var navHeight = $(window).height() - 100;
+        if ($(window).scrollTop() > navHeight) {
+            $('.navbar-default').addClass('on');
+        } else {
+            $('.navbar-default').removeClass('on');
+        }
+    });
+
+    $('body').scrollspy({ 
+        target: '.navbar-default',
+        offset: 80
+    })
+
+  	$(document).ready(function() {
+  	  $("#team").owlCarousel({
+  	 
+  	      navigation : false, // Show next and prev buttons
+  	      slideSpeed : 300,
+  	      paginationSpeed : 400,
+  	      autoHeight : true,
+  	      itemsCustom : [
+				        [0, 1],
+				        [450, 2],
+				        [600, 2],
+				        [700, 2],
+				        [1000, 4],
+				        [1200, 4],
+				        [1400, 4],
+				        [1600, 4]
+				      ],
+  	  });
+
+  	  $("#clients").owlCarousel({
+  	 
+  	      navigation : false, // Show next and prev buttons
+  	      slideSpeed : 300,
+  	      paginationSpeed : 400,
+  	      autoHeight : true,
+  	      itemsCustom : [
+				        [0, 1],
+				        [450, 2],
+				        [600, 2],
+				        [700, 2],
+				        [1000, 4],
+				        [1200, 5],
+				        [1400, 5],
+				        [1600, 5]
+				      ],
+  	  });
+
+      $("#testimonial").owlCarousel({
+        navigation : false, // Show next and prev buttons
+        slideSpeed : 300,
+        paginationSpeed : 400,
+        singleItem:true
+        });
+
+  	});
+
+  	/*====================================
+    Portfolio Isotope Filter
+    ======================================*/
+    $(window).load(function() {
+        var $container = $('#lightbox');
+        $container.isotope({
+            filter: '*',
+            animationOptions: {
+                duration: 750,
+                easing: 'linear',
+                queue: false
+            }
+        });
+        $('.cat a').click(function() {
+            $('.cat .active').removeClass('active');
+            $(this).addClass('active');
+            var selector = $(this).attr('data-filter');
+            $container.isotope({
+                filter: selector,
+                animationOptions: {
+                    duration: 750,
+                    easing: 'linear',
+                    queue: false
+                }
+            });
+            return false;
+        });
+
+    });
+
+
+
+}());
+
+
+}
+main();
