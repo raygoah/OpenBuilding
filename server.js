@@ -79,6 +79,17 @@ app.post('/renew',function(req, res){
 
                             for (i = 0; i < result2.length; ++i) {
                                 var design = JSON.parse(result2[i].design);
+                                var user_name
+                                if (design.items.length > 0)
+                                    user_name = design.items[0].item_name.split("_")[0]
+                                for (j = 0;; j++) {
+                                    if (j == Group_obj.items.length)
+                                        break
+                                    if (Group_obj.items[j].item_name.split("_")[0] == user_name) {
+                                        var deletedItem = Group_obj.items.splice(j,1)
+                                        j--
+                                    }
+                                }
                                 for (j = 0; j < design.items.length; ++j) {
                                     Group_obj.items.push(design.items[j]);
                                 }
