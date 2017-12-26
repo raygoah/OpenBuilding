@@ -6,6 +6,8 @@
   "dependencies": {
     "await": "^0.2.6",
     "express": "^4.16.2",
+    "gsap": "^1.20.3",
+    "jquery": "^3.2.1",
     "mongodb": "^2.2.33",
     "promise": "^8.0.1",
     "webpack": "^3.8.1"

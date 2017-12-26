@@ -3968,15 +3968,16 @@ var BP3D;
                         value: verticalOffset
                     }
                 };
-                var skyGeo = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
-                var skyMat = new THREE.ShaderMaterial({                    
-                    vertexShader: vertexShader,
-                    fragmentShader: fragmentShader,
-                    uniforms: uniforms,
-                    side: THREE.BackSide
-                });
-                var sky = new THREE.Mesh(skyGeo, skyMat);
-                scene.add(sky);
+           		var loader = new THREE.TextureLoader();
+                loader.load('./background.jpg', function (texture) {
+                    var materials = new THREE.MeshBasicMaterial({
+                        map: texture, side: THREE.BackSide
+                    });
+                    var material = new THREE.MeshFaceMaterial([materials, materials, materials, materials, materials, materials]);
+                    var skyGeo = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
+                    var sky = new THREE.Mesh(skyGeo, material);
+                    scene.add(sky);
+                }); 
             }
             init();
         };
