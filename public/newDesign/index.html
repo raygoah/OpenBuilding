@@ -4,16 +4,9 @@
     <title>Happy House</title>
 
     <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-select.css" rel="stylesheet">
     <link href="css/example.css" rel="stylesheet">
 
-    <script src="js/three.min.js"></script>
-    <script src="js/blueprint3d.js"></script>
-
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.js"></script>
-    
-    <script src="js/items.js"></script>
-    <script src="js/example.js"></script>
   </head>
 
   <body>
@@ -30,6 +23,19 @@
               <span class="glyphicon glyphicon-chevron-right pull-right"></span>
             </a></li>
           -->
+            <li id="tags_tab"><a href="#">
+              Tags
+              <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+            </a></li>
+            <li id="tag_context" class="lead">
+                <h3>Add tags</h2>
+                <select class="selectpicker form-control" data-live-search="true"   
+                        multiple data-max-option="5" title="Choose tags" id="tag-input">
+                </select>
+                <p id="tag-label">Or you can create your own tags</p>
+                <input class="form-control" id="new-tag" type="text" placeholder="Create new tag">
+                <button class="btn btn-block btn-success" id="tag-context-submit"> Add tag </button>            </li>
+            </li>
             <li id="design_tab"><a href="#">
               Design
               <span class="glyphicon glyphicon-chevron-right pull-right"></span>
@@ -226,4 +232,14 @@
     </div>
 
   </body>
+    <script src="js/three.min.js"></script>
+    <script src="js/blueprint3d.js"></script>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap-select.js"></script>
+    
+    <script src="js/items.js"></script>
+    <script src="js/tags.js"></script>
+    <script src="js/example.js"></script>
 </html>

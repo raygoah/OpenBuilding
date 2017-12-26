@@ -219,6 +219,7 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
 
   var tabs = {
     "FLOORPLAN" : $("#floorplan_tab"),
+    "TAG" : $("#tags_tab"),
     "SHOP" : $("#items_tab"),
     "DESIGN" : $("#design_tab")
   }
@@ -234,6 +235,10 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
     "FLOORPLAN" : {
       "div" : $("#floorplanner"),
       "tab" : tabs.FLOORPLAN
+    },
+    "TAG" : {
+      "div" : $("#tag_context"),
+      "tab" : tabs.TAG
     },
     "SHOP" : {
       "div" : $("#add-items"),
@@ -251,7 +256,7 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
     }
 
     $("#update-floorplan").click(floorplanUpdate);
-
+    
     initLeftMenu();
 
     blueprint3d.three.updateWindowSize();
@@ -305,7 +310,8 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
     currentState.div.hide()
 
     // show design when adding items
-    if (newState == scope.states.SHOP) {
+    if (newState == scope.states.SHOP ||
+        newState == scope.states.TAG) {
       scope.states.DEFAULT.div.show()
     }
     newState.div.show()
