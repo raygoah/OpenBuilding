@@ -60,6 +60,9 @@ app.post('/renew',function(req, res){
             if (result1 != 0) {
                 var c_date=result1[0].update_time;//community's renew date
                 var c_file=result1[0].community_file;//community's file info
+                var communityX = JSON.parse(result1[0].communityX);
+                var communityY = JSON.parse(result1[0].communityY);
+                var house_count = JSON.parse(result1[0].house_count);
                 var Group_obj = JSON.parse(c_file);
 
                 MongoClient.connect(dbPath, function(err3, db2) {
@@ -74,55 +77,102 @@ app.post('/renew',function(req, res){
                             })
                         } else {//需要更新社區時
 
-                            var corner_is_in = false
-                            var wall_is_in = false
-
                             for (i = 0; i < result2.length; ++i) {
+                                
                                 var design = JSON.parse(result2[i].design);
                                 var user_name
+                                
+                                var minX = 99999999
+                                var minY = 99999999
+                                var maxX = -99999999
+                                var maxY = -99999999
+                                
+                                for (j in design.floorplan.corners) {
+                                    user_name = j.split("_")[0]
+                                }
+
+                                for (j in Group_obj.floorplan.corners) {
+                                    if (j.split("_")[0] == user_name)
+                                        delete Group_obj.floorplan.corners[j]
+                                }
+
+                                for(j = 0;; j++) {
+                                    if (j == Group_obj.floorplan.walls.length)
+                                        break
+                                    if (Group_obj.floorplan.walls[j].corner1.split("_")[0] == user_name) {
+                                        var deletedWall = Group_obj.floorplan.walls.splice(j, 1)
+                                        j--
+                                    }
+                                }
+
                                 if (design.items.length > 0)
                                     user_name = design.items[0].item_name.split("_")[0]
                                 for (j = 0;; j++) {
                                     if (j == Group_obj.items.length)
                                         break
                                     if (Group_obj.items[j].item_name.split("_")[0] == user_name) {
-                                        var deletedItem = Group_obj.items.splice(j,1)
+                                        var deletedItem = Group_obj.items.splice(j, 1)
                                         j--
                                     }
+                                }
+
+                                // Calculate house min rect
+                                for (j in design.floorplan.corners) {
+                                    if (design.floorplan.corners[j].x < minX)
+                                        minX = design.floorplan.corners[j].x
+                                    if (design.floorplan.corners[j].y < minY)
+                                        minY = design.floorplan.corners[j].y
+                                    if (design.floorplan.corners[j].x > maxX)
+                                        maxX = design.floorplan.corners[j].x
+                                    if (design.floorplan.corners[j].y > maxY)
+                                        maxY = design.floorplan.corners[j].y
+                                }
+                                
+                                var rangeX = minX - communityX
+                                var rangeY = minY - communityY
+                               
+                                // Add corners
+                                for (j in design.floorplan.corners) {
+                                    Group_obj.floorplan.corners[j] = {"x": design.floorplan.corners[j].x - rangeX, "y": design.floorplan.corners[j].y - rangeY}
+                                }
+                                
+                                // Add walls
+                                for (j = 0; j < design.floorplan.walls.length; j++) {
+                                    Group_obj.floorplan.walls.push(design.floorplan.walls[j])
+                                }
+
+                                // Add items
+                                for (j = 0; j < design.items.length; ++j) {
+                                    design.items[j].xpos = design.items[j].xpos - rangeX
+                                    design.items[j].zpos = design.items[j].zpos - rangeY
                                 }
                                 for (j = 0; j < design.items.length; ++j) {
                                     Group_obj.items.push(design.items[j]);
                                 }
 
-                                for (j in design.floorplan.corners) {
-                                    corner_is_in = false
-                                    for (k in Group_obj.floorplan.corners)
-                                        if (j == k)
-                                            corner_is_in = true
-                                    if (!corner_is_in)
-                                        Group_obj.floorplan.corners[j] = {"x":design.floorplan.corners[j].x, "y": design.floorplan.corners[j].y}
-                                }
+                                communityX = communityX + (maxX - minX)
+                                house_count++
+                                if (house_count % 9 == 0) {
+                                    communityY = communityY + 600 + (maxY - minY)
+                                    communityX = 0
 
-                                for (j = 0; j < design.floorplan.walls.length; j++) {
-                                    wall_is_in = false
-                                    for (k = 0; k < Group_obj.floorplan.walls.length; k++)
-                                        if (design.floorplan.walls[j].corner1 == Group_obj.floorplan.walls[k].corner1)
-                                            if (design.floorplan.walls[j].corner2 == Group_obj.floorplan.walls[k].corner2)
-                                                wall_is_in = true
-                                    if (!wall_is_in)
-                                        Group_obj.floorplan.walls.push(design.floorplan.walls[j])
                                 }
                             }
 
                             res.send({
                                 file: Group_obj
                             })
+                            
                             var answer = JSON.stringify(Group_obj);
                             var myquery = {community_id:1};
                             var set_community = {$set:{community_file: answer}};
+                            
                             var time = new Date();
                             time = time.toJSON();
                             var set_time = {$set:{update_time: time}};
+                            
+                            var set_xy = {$set:{communityX: communityX, communityY: communityY, house_count: house_count}};
+                            
                             MongoClient.connect(dbPath, function(err5, db3) {
                                 if (err5) throw err5;
                                 db3.collection("community_info").updateOne(//更新資料庫中community_info的community_file
@@ -143,6 +193,15 @@ app.post('/renew',function(req, res){
                                     }
                                 )
                                 
+                                db3.collection("community_info").updateOne(//更新料庫中community_info的corner info
+                                    myquery,
+                                    set_xy,
+                                    function(err8, result5){
+                                        if (err8) throw err8;
+                                        console.log("corner info update");
+                                    }
+                                )
+
                                 db3.close()
                             })//db3 connect
                         }
