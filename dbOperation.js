@@ -97,41 +97,27 @@ function saveDesign (account, design) {
 function getHouseCorner (houseId) {
   //console.log("In getHouseCorner");
   return new Promise((resolve, reject) => {
-    MongoClient.connect (dbPath, function (err, db) {
-      if(err) reject(err);
+		var origin = '{"floorplan":{"corners":{"user' + houseId + 
+								 '_c0" :{"x":204.85099999999989,"y":289.052},"user' + houseId + 
+			  				 '_c1" :{"x":672.2109999999999, "y":289.052},"user' + houseId +
+								 '_c2" :{"x":672.2109999999999, "y":-178.308},"user' + houseId + 
+								 '_c3" :{"x":204.85099999999989,"y":-178.308}},"walls":[{"corner1":"user' + houseId +
+								 '_c3","corner2":"user' + houseId +
+								 '_c0","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"user' + houseId + 
+								 '_c0","corner2":"user' + houseId +
+								 '_c1","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"user' + houseId +
+								 '_c1","corner2":"user' + houseId + 
+								 '_c2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"user' + houseId + 
+								 '_c2","corner2":"user' + houseId + 
+								 '_c3","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}}],"wallTextures":[],"floorTextures":{},"newFloorTextures":{}},"items":[]}';
+		origin = JSON.parse(origin);
 
-      db.collection("community_house").find ({
-        house_id: houseId
-      }).toArray( (err, result) => {
-        db.close();
-        if (err) reject(err);
-        if (result == 0) {
-          reject("House sold out!");
-        } else {
-          var origin = '{"floorplan":{"corners":{"user' + houseId + 
-                       '_c0" :{"x":' + result[0].corner[0].x + ',"y":' + result[0].corner[0].y + '},"user' + houseId + 
-                       '_c1" :{"x":' + result[0].corner[1].x + ',"y":' + result[0].corner[1].y + '},"user' + houseId +
-                       '_c2" :{"x":' + result[0].corner[2].x + ',"y":' + result[0].corner[2].y + '},"user' + houseId + 
-                       '_c3" :{"x":' + result[0].corner[3].x + ',"y":' + result[0].corner[3].y + '}},"walls":[{"corner1":"user' + houseId +
-                       '_c3","corner2":"user' + houseId +
-                       '_c0","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"user' + houseId + 
-                       '_c0","corner2":"user' + houseId +
-                       '_c1","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"user' + houseId +
-                       '_c1","corner2":"user' + houseId + 
-                       '_c2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"user' + houseId + 
-                       '_c2","corner2":"user' + houseId + 
-                       '_c3","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}}],"wallTextures":[],"floorTextures":{},"newFloorTextures":{}},"items":[]}';
-          origin = JSON.parse(origin);
-
-          saveNewDesign(houseId, origin). then((res) => {
-            resolve(JSON.stringify(origin));
-          }).catch((e) => {
-            reject(e);
-          });
-        }
-      });
-    });
-  });
+		saveNewDesign(houseId, origin). then((res) => {
+			resolve(JSON.stringify(origin));
+		}).catch((e) => {
+			reject(e);
+		});
+	});
 }
 
 async function getDesign (account) {
