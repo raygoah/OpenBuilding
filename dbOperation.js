@@ -88,6 +88,7 @@ function saveDesign (account, design) {
           if (err1) reject(err1);
           else resolve();
       });
+      db.close();
     });
   });
   });
@@ -144,8 +145,95 @@ async function getDesign (account) {
   }
 } 
 
+function getTag (account) {
+  return new Promise((resolve, reject) => {
+    var oldTag = [];
+
+    getHouseId (account).then( (houseId) => {
+
+      MongoClient.connect (dbPath, (err, db) => {
+        if(err) reject(err);
+       
+        db.collection("design_info").find({
+          design_id: houseId 
+        }).toArray ((err, res) => {
+          if (err) reject(err);
+          else if (res[0].tag != null ){
+            //console.log(res[0].tag);
+            oldTag = JSON.parse(res[0].tag);
+          }
+          db.close();
+          resolve(oldTag);
+        });
+      });
+    });
+  });
+}
+ 
+function getNewTag (account, tags, opt) {
+  return new Promise((resolve, reject) => {
+    getTag(account).then( (oldTag) => {
+
+      if (opt == 0) {
+        //insert new tag to json array
+        for (var i in tags) {
+          var item = tags[i], flag = 0;
+          // check if there is the same tag
+          for (var j in oldTag) {
+            if (oldTag[j].tag == item) {
+              flag = 1;
+              break;
+            }
+          }
+          if (flag == 0) {
+            oldTag.push ({
+              "tag" : item
+            });
+          }
+        };
+      } else if (opt == 1) {
+        // delete a tag
+        for (var j in oldTag) {
+          if (oldTag[j].tag == tags) {
+            oldTag.splice(j, 1);
+            break;
+          }
+        }
+      };
+
+      resolve(oldTag);
+    });
+  });
+}
+  
+async function updateTag (account, tag, opt) {
+  var tags, houseId;
+
+  try{
+    houseId = await getHouseId(account);
+    tags = await getNewTag(account, tag, opt);
+  } catch (e) {
+    return e;
+  }
+
+  MongoClient.connect (dbPath, (err, db) => {
+    if (err) reject(err);
+
+    db.collection("design_info").update({
+      design_id: houseId },{
+      $set: {
+        tag: JSON.stringify(tags)
+      }}, (err1, res) => {
+        if (err1) return(err1);
+        else return;
+      });
+    db.close();
+  });
+}
 
 module.exports = {
   getDesign: getDesign,
-  saveDesign: saveDesign
+  saveDesign: saveDesign,
+  getTag: getTag,
+  updateTag: updateTag
 };

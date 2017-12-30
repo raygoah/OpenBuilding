@@ -6,7 +6,7 @@ const Design = require('./dbOperation.js')
 const bodyParser = require('body-parser')
 const await = require('await')
 const app = express()
-const port = 8585
+const port = 8181
 const MongoClient = require('mongodb').MongoClient;
 const dbPath = secret.dbPath;
 
@@ -49,6 +49,36 @@ app.post("/updateDesign", function (req, res) {
     res.send("Fail!");
   });
 })
+
+app.post("/getTags", function (req, res) {
+  var account = req.body['account'];
+  Design.getTag(account).then((result) => {
+    res.send(result);
+  }).catch((e) => {
+    res.send("Fail!");
+  });
+})
+
+app.post("/addTags", function (req, res) {
+  var account = req.body['account'];
+  var tags = req.body['tags'];
+  Design.updateTag(account, tags, 0).then((result) => {
+    res.send("success!");
+  }).catch((e) => {
+    res.send("Fail!");
+  });
+})
+
+app.post("/deleteTags", function (req, res) {
+  var account = req.body['account'];
+  var tags = req.body['tags'];
+  Design.updateTag(account, tags, 1).then((result) => {
+    res.send("success!");
+  }).catch((e) => {
+    res.send("remove Fail!");
+  });
+})
+
 
 app.post('/renew',function(req, res){
     MongoClient.connect(dbPath, function(err1, db1) {
