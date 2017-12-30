@@ -144,6 +144,8 @@ function getTag (account) {
           design_id: houseId 
         }).toArray ((err, res) => {
           if (err) reject(err);
+					else if (res[0] == null) 
+						resolve();
           else if (res[0].tag != null ){
             //console.log(res[0].tag);
             oldTag = JSON.parse(res[0].tag);
