@@ -173,7 +173,58 @@ div {
   margin: 10px 0;
 }
 
+.show_tag {
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
 #tag-label {
   margin: 10px 0;
   font-size: 16px;
+}
+
+.tag-list {
+  margin: 10px 5px;
+  font-size: 15px;
+	text-align: center;
+	border-radius: 4px;
+  border: none;
+	transition: all 0.5s;
+  outline: 0;
+}
+
+.tag-list:active {
+  outline: 0;
+  border: 0;
+}
+
+.tag-list span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.tag-list span:after {
+  content: '\2716';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -10px;
+  transition: 0.5s;
+}
+
+.tag-list:hover {
+	background-color: #d9534f;
+	border: none;
+}
+
+.tag-list:hover span {
+  padding-right: 20px;
+}
+
+.tag-list:hover span:after {
+  opacity: 1;
+  right: 0;
 }
