@@ -310,16 +310,44 @@ img.img-circle.team-img {
 }
 
 /* Animation Section */
-
+.st1{fill:#C1BBC8;}
+.st2{fill:#ECE1A6;}
+.st3{fill:#F6B990;}
+.st4{fill:#F9D287;}
+.st5{fill:#EFEFEF;}
+.st6{fill:#FEFDFE;}
+.st7{fill:#DBDBDB;}
+.st8{fill:#C9C2CD;}
+.st9{fill:#E5E2DF;}
+.st10{fill:#C2BCC8;}
+.st11{fill:#767684;}
+.st12{fill:#EF8025;}
+.st13{fill:#1B1B1B;}
+.st14{fill:#D6D0DC;}
+.st15{fill:#F2E6F1;}
+.st16{fill:#E1D4DE;}
+.st17{fill:#0D0C0D;}
+.st19{fill:#A8A2AE;}
+.st20{fill:#F1D1BB;}
+.st21{fill:#9E9E9E;}
+.st22{fill:#5D5E5E;}
+.st23{fill:#634498;}
+.st24{fill:#DACFC5;}
+.st25{fill:#262627;}
+.st26{fill:#BCBCBC;}
+.st27{fill:#222222;}
+.st28{fill:#B698C6;}
+.st29{fill:#E8E8E8;}
+.st30{fill:#7E7E7F;}
 .wrap {
 	height: 45%;
 	width: 100%;
 	margin: 0px;
 	padding: 0px;
 	overflow: hidden;
-	background: linear-gradient(to left, #73C8A9 , #373B44);
+	background: rgba(0,0,0,0);
 }
-#vvolf {
+#house {
   height: 45%;
   width: 45%;
 }
@@ -359,12 +387,25 @@ nav#footer p{
 }
 
 /* login register modal */
-div#reg_modal div.modal-dialog,
-div#login_modal div.modal-dialog {
-    width: 40rem;
-    top: 50%;
-    transform: translateY(-50%);
+@media screen and (min-width: 700px) {
+	div#reg_modal div.modal-dialog,
+	div#login_modal div.modal-dialog {
+		width: 35%;
+		top: 50%;
+		margin: 0 auto;
+		transform: translateY(-50%);
+	}
 }
+@media screen and (max-width: 699px) {
+	div#reg_modal div.modal-dialog,
+	div#login_modal div.modal-dialog {
+		width: 100%;
+		top: 50%;
+		margin: 0 auto;
+		transform: translateY(-50%);
+    }
+}
+
 div.modal-body {
     text-align: center;
 }

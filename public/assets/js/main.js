@@ -97,98 +97,99 @@ $("#community_btn").click(
     }
 )
 
-$('#login_form').submit(
-    function(e) {
-        e.preventDefault();
-    }
-)
-
-$('#reg_form').submit(
-    function(e) {
-        e.preventDefault();
-    }
-)
-
-$('#login_send').click(
+$("#login_send").click(
     function() {
-		if($('#login_account').val() != "" && $('#login_password').val() != "") {
-			$.ajax({
-				method: "post",
-				url: "/login",
-				data: {
-					account: $('#login_account').val(),
-					pwd: $('#login_password').val()
-				}, 
-				success: function(data) {
-					if(data['success'] == false) {
-						if(data['account'] == false) {
-							document.getElementById('login_account').style.backgroundColor = '#FFC1C1';
-							document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
-						} else {
-							document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
-							document.getElementById('login_password').style.backgroundColor = '#FFC1C1';
-						}
-					} else {
-						document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
-						document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
-						$('#login_modal').modal('hide');
-						setCookie("account", data['data'].account, 30);
-						setCookie("nickname", data['data'].nickname, 30);
-						checkCookie();
-						document.getElementById('login_account').value = "";
-						document.getElementById('login_password').value = "";
-					}
-				},
-				error: function(data) {
-					console.log("register error")
-				}
-			})
-		}
+        if($('#login_account').val() != "" && $('#login_password').val() != "") {
+            $.ajax({
+                method: "post",
+                url: "/login",
+                data: {
+                    account: $('#login_account').val(),
+                    pwd: $('#login_password').val()
+                }, 
+                success: function(data) {
+                    if(data['success'] == false) {
+                        if(data['account'] == false) {
+                            document.getElementById('login_account').style.backgroundColor = '#FFC1C1';
+                            document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
+                        } else {
+                            document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
+                            document.getElementById('login_password').style.backgroundColor = '#FFC1C1';
+                        }
+                        return false;
+                    } else {
+                        document.getElementById('login_account').style.backgroundColor = '#FFFFFF';
+                        document.getElementById('login_password').style.backgroundColor = '#FFFFFF';
+                        $('#login_modal').modal('hide');
+                        setCookie("account", data['data'].account, 30);
+                        setCookie("nickname", data['data'].nickname, 30);
+                        checkCookie();
+                        document.getElementById('login_account').value = "";
+                        document.getElementById('login_password').value = "";
+                        return true;
+                    }
+                },
+                error: function(data) {
+                    console.log("register error")
+                    return false;
+                }
+            })
+        }
     }
 )
+
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
 
 $('#reg_send').click(
-    function() {
-		if($('#reg_account').val() != "" && $('#reg_password').val() != "" && $('#reg_nickname').val() != "" &&  $('#reg_email').val() != "") {
-			$.ajax({
-				method: "post",
-				url: "/register",
-				data: {
-					account: $('#reg_account').val(),
-					pwd: $('#reg_password').val(),
-					nickname: $('#reg_nickname').val(),
-					email: $('#reg_email').val()
-				},
-				success: function(data) {
-					if(data['success'] == false) {
-						if(data['account'] == false) {
-							document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
-							document.getElementById('reg_account').style.backgroundColor = '#FFC1C1';
-							document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
-						} else {
-							document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
-							document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
-							document.getElementById('reg_email').style.backgroundColor = '#FFC1C1';
-						}
-					} else {
-						document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
-						document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
-						$('#reg_modal').modal('hide');
-						setCookie("account", $('#reg_account').val(), 30);
-						setCookie("nickname", $('#reg_nickname').val(), 30);
-						checkCookie();
+    function(){
+        if(!validateEmail($('#reg_email').val())) {
+            document.getElementById('reg_email').style.backgroundColor = '#FFC1C1';
+            return;
+        }
 
-						document.getElementById('reg_account').value = "";
-						document.getElementById('reg_password').value = "";
-						document.getElementById('reg_nickname').value = "";
-						document.getElementById('reg_email').value = "";
-					}
-				},
-				error: function(data) {
-					console.log("register error")
-				}
-			})
-		}
+        if($('#reg_account').val() != "" && $('#reg_password').val() != "" && $('#reg_nickname').val() != "" &&  $('#reg_email').val() != "") {
+			$.ajax({
+                method: "post",
+                url: "/register",
+                data: {
+                    account: $('#reg_account').val(),
+                    pwd: $('#reg_password').val(),
+                    nickname: $('#reg_nickname').val(),
+                    email: $('#reg_email').val()
+                },
+                success: function(data) {
+                    if(data['success'] == false) {
+                        if(data['account'] == false) {
+                            document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
+                            document.getElementById('reg_account').style.backgroundColor = '#FFC1C1';
+                            document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
+                        } else {
+                            document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
+                            document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
+                            document.getElementById('reg_email').style.backgroundColor = '#FFC1C1';
+                        }
+                    } else {
+                        document.getElementById('reg_account').style.backgroundColor = '#FFFFFF';
+                        document.getElementById('reg_email').style.backgroundColor = '#FFFFFF';
+                        $('#reg_modal').modal('hide');
+                        setCookie("account", $('#reg_account').val(), 30);
+                        setCookie("nickname", $('#reg_nickname').val(), 30);
+                        checkCookie();
+
+                        document.getElementById('reg_account').value = "";
+                        document.getElementById('reg_password').value = "";
+                        document.getElementById('reg_nickname').value = "";
+                        document.getElementById('reg_email').value = "";
+                    }
+                },
+                error: function(data) {
+                    console.log("register error")
+                }
+            })
+        }
     }
 )
 
