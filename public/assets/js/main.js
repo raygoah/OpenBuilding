@@ -150,14 +150,18 @@ $('#reg_send').click(
             return;
         }
 
-        if($('#reg_account').val() != "" && $('#reg_password').val() != "" && $('#reg_nickname').val() != "" &&  $('#reg_email').val() != "") {
+        var reg_nickname = $( $.parseHTML($('#reg_nickname').val() )).text(); 
+        var reg_account = $( $.parseHTML($('#reg_account').val() )).text(); 
+        var reg_password = $( $.parseHTML($('#reg_password').val() )).text(); 
+
+        if(reg_account != "" && reg_password != "" && reg_nickname != "" &&  $('#reg_email').val() != "") {
 			$.ajax({
                 method: "post",
                 url: "/register",
                 data: {
-                    account: $('#reg_account').val(),
-                    pwd: $('#reg_password').val(),
-                    nickname: $('#reg_nickname').val(),
+                    account: reg_account,
+                    pwd: reg_password,
+                    nickname: reg_nickname,
                     email: $('#reg_email').val()
                 },
                 success: function(data) {

@@ -24,20 +24,24 @@ httpsServer.listen(port, function () {
 })
 
 app.post("/newDesign", function (req, res) {
-  var account = req.body['account'];
-  Design.getDesign(account).then((design) => {
-    if (design === "House sold out!") {
-      res.send({
-        success: false,
-        file: design
-      })
-    } else {
-      res.send({
-        success: true,
-        file: JSON.parse(design)
-      })
+    var account = req.body['account'];
+    if(account === "")
+        res.send(404);
+    else {
+    Design.getDesign(account).then((design) => {
+        if (design === "House sold out!" || design === "Please Login First!") {
+            res.send({
+                success: false,
+                file: design
+            })
+        } else {
+            res.send({
+                success: true,
+                file: JSON.parse(design)
+            })
+        }
+    });
     }
-  });
 })
 
 app.post("/updateDesign", function (req, res) {

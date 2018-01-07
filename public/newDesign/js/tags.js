@@ -97,7 +97,9 @@ $("#tag-context-submit").click(function(e) {
   } 
     
   if(txtField.val() != "") {
-    items.push(txtField.val());
+	var own = $( $.parseHTML(txtField.val()) ).text();
+	if (own != "")
+    	items.push(own);
   }
 
   //console.log(items);

@@ -13,8 +13,8 @@ function getHouseId (account) {
         account: account 
       }).toArray ((err, res) => {
         if (err) reject(err);
-        else if(res[0].user_id > 18)
-          reject("House sold out!");
+        else if(res.length == 0)
+          reject("Please Login First!");
         else {
           db.close();
           resolve(res[0].user_id);
