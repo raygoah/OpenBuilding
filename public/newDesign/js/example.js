@@ -107,13 +107,13 @@ var CameraButtons = function(blueprint3d) {
   function zoomIn(e) {
     e.preventDefault();
     orbitControls.dollyIn(1.1);
-    orbitControls.update();
+    orbitControls.update(true);
   }
 
   function zoomOut(e) {
     e.preventDefault;
     orbitControls.dollyOut(1.1);
-    orbitControls.update();
+    orbitControls.update(true);
   }
 
   init();
@@ -537,32 +537,47 @@ var mainControls = function(blueprint3d) {
   }
 
   function saveDesign() {
+    $("#myModal").modal("show");
+
     var design = blueprint3d.model.exportSerialized();
-    var a = window.document.createElement('a');
-    console.log(design);
-
-    var user = getCookie("account");
-    $.ajax({
-      method: "post",
-      url: "/updateDesign",
-      data: {
-        account: user,
-        design: design
-      },
-      success: function (data) {
-        alert(data);
-      },
-      error: function (data) {
-        alert(data);
-      }
-    })
-
-    /*var blob = new Blob([data], {type : 'text'});
-    a.href = window.URL.createObjectURL(blob);
-    a.download = 'design.blueprint3d';
-    document.body.appendChild(a)
-    a.click();
-    document.body.removeChild(a)*/
+    var pic = blueprint3d.three.dataUrl().split(',')[1];
+    console.log(pic);
+    //console.log(design);
+    var promise = new Promise((resolve, reject) => {
+			$.ajax({
+				type: "post",
+				url: "https://api.imgur.com/3/image",
+				headers: {
+					Authorization: "Client-ID 1419482e1a6372b"
+				}, 
+				data: {
+					image: pic
+				},
+				dataType: "json",
+				success: function (res) {
+					console.log("upload success");
+					resolve(res.data.link);
+				},
+			})
+		}).then ((url) => {
+			var user = getCookie("account");
+			$.ajax({
+				method: "post",
+				url: "/updateDesign",
+				data: {
+					account: user,
+					design: design,
+					pic: url
+				},
+				success: function (data) {
+					//alert(data);
+          $("#myModal").modal("hide");
+				},
+				error: function (data) {
+					alert(data);
+				}
+			})
+		});
   }
 
   function init() {
