@@ -6,7 +6,7 @@ const Design = require('./dbOperation.js')
 const bodyParser = require('body-parser')
 const await = require('await')
 const app = express()
-const port = 8181
+const port = 8585
 const MongoClient = require('mongodb').MongoClient;
 const dbPath = secret.dbPath;
 
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 
 httpsServer = https.createServer(credential, app)
 httpsServer.listen(port, function () {
-  console.log('listening on port 8181')
+  console.log('listening on port ' + port)
 })
 
 app.post("/newDesign", function (req, res) {
@@ -47,7 +47,8 @@ app.post("/newDesign", function (req, res) {
 app.post("/updateDesign", function (req, res) {
   var account = req.body['account'];
   var design = req.body['design'];
-  Design.saveDesign(account, design).then((result) => {
+  var pic = req.body['pic'];
+  Design.saveDesign(account, design, pic).then((result) => {
     res.send("Success!");
   }).catch((e) => {
     res.send("Fail!");
@@ -83,6 +84,14 @@ app.post("/deleteTags", function (req, res) {
   });
 })
 
+app.post("/search", function (req, res) {
+  var keyword = req.body['keyword'];
+  Design.search(keyword).then((result) => {
+    res.send(result);
+  }).catch((e) => {
+    res.send("Fail!");
+  });
+})
 
 app.post('/renew',function(req, res){
     MongoClient.connect(dbPath, function(err1, db1) {
