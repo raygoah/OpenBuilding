@@ -62,7 +62,8 @@ function saveNewDesign (houseId, design) {
         created_time: date.toJSON(),
         last_modified_time: date.toJSON(),
         rank: 0,
-        design: JSON.stringify(design)
+        design: JSON.stringify(design),
+        pic: null
       }, (err1, res1) => {
         db.close();
         if(err1) reject(err1);
@@ -72,7 +73,7 @@ function saveNewDesign (houseId, design) {
   });
 }
 
-function saveDesign (account, design) {
+function saveDesign (account, design, pic) {
   return new Promise((resolve, reject) => {
     getHouseId(account).then ((houseId) => {
     MongoClient.connect (dbPath, (err, db) => {
@@ -82,8 +83,10 @@ function saveDesign (account, design) {
       db.collection("design_info").update({
         design_id: houseId },{
         $set: {
+          user_account: account,
           last_modified_time: date.toJSON(),
-          design: design
+          design: design,
+          pic: pic
         }}, (err1, res) => {
           if (err1) reject(err1);
           else resolve();
@@ -219,9 +222,36 @@ async function updateTag (account, tag, opt) {
   });
 }
 
+function search (keyword) {
+  return new Promise((resolve, reject) => {
+    MongoClient.connect (dbPath, (err, db) => {
+      if(err) reject(err);
+     
+      db.collection("design_info").find({
+        $or: [ { tag: { $regex: keyword }},
+               { design: { $regex: keyword }},
+               { user_account: { $regex: keyword }}]  
+      },{
+        user_account: 1,
+        tag: 1,
+        design: 1,
+        pic: 1
+      }).toArray ((err, res) => {
+        db.close();
+        if (err) reject(err);
+        else if (res[0] == null) 
+          resolve("No result");
+        else 
+          resolve(res);
+      });
+    });
+  });
+}
+
 module.exports = {
   getDesign: getDesign,
   saveDesign: saveDesign,
   getTag: getTag,
-  updateTag: updateTag
+  updateTag: updateTag,
+  search: search
 };
