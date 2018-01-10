@@ -14,6 +14,29 @@ function getCookie(cname) {
   return "";
 }
 
+function checkCookie() {
+    var user=getCookie("account");
+    if (user != "") {
+    	// user login;
+		var name = getCookie("nickname");
+
+        $("#logout_btn").click(
+            function() {
+                var user=getCookie("account");
+                if(user.length > 30) {
+                    var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut();
+                }
+                setCookie("account", "", "nickname", "", 30);
+                checkCookie();
+            }
+        )
+	} else {
+        alert("Please login first");
+        location.href = "../index.html";
+    }
+}
+window.onload = checkCookie();
 /*
  * Camera Buttons
  */
@@ -84,13 +107,13 @@ var CameraButtons = function(blueprint3d) {
   function zoomIn(e) {
     e.preventDefault();
     orbitControls.dollyIn(1.1);
-    orbitControls.update();
+    orbitControls.update(true);
   }
 
   function zoomOut(e) {
     e.preventDefault;
     orbitControls.dollyOut(1.1);
-    orbitControls.update();
+    orbitControls.update(true);
   }
 
   init();
@@ -133,7 +156,8 @@ var ContextMenu = function(blueprint3d) {
   function itemSelected(item) {
     selectedItem = item;
 
-    $("#context-menu-name").text(item.metadata.itemName);
+    var index = item.metadata.itemName.indexOf("_") + 1;
+    $("#context-menu-name").text(item.metadata.itemName.slice(index));
 
     $("#item-width").val(cmToIn(selectedItem.getWidth()).toFixed(0));
     $("#item-height").val(cmToIn(selectedItem.getHeight()).toFixed(0));
@@ -513,32 +537,47 @@ var mainControls = function(blueprint3d) {
   }
 
   function saveDesign() {
+    $("#myModal").modal("show");
+
     var design = blueprint3d.model.exportSerialized();
-    var a = window.document.createElement('a');
-    console.log(design);
-
-    var user = getCookie("account");
-    $.ajax({
-      method: "post",
-      url: "/updateDesign",
-      data: {
-        account: user,
-        design: design
-      },
-      success: function (data) {
-        alert(data);
-      },
-      error: function (data) {
-        alert(data);
-      }
-    })
-
-    /*var blob = new Blob([data], {type : 'text'});
-    a.href = window.URL.createObjectURL(blob);
-    a.download = 'design.blueprint3d';
-    document.body.appendChild(a)
-    a.click();
-    document.body.removeChild(a)*/
+    var pic = blueprint3d.three.dataUrl().split(',')[1];
+    console.log(pic);
+    //console.log(design);
+    var promise = new Promise((resolve, reject) => {
+			$.ajax({
+				type: "post",
+				url: "https://api.imgur.com/3/image",
+				headers: {
+					Authorization: "Client-ID 1419482e1a6372b"
+				}, 
+				data: {
+					image: pic
+				},
+				dataType: "json",
+				success: function (res) {
+					console.log("upload success");
+					resolve(res.data.link);
+				},
+			})
+		}).then ((url) => {
+			var user = getCookie("account");
+			$.ajax({
+				method: "post",
+				url: "/updateDesign",
+				data: {
+					account: user,
+					design: design,
+					pic: url
+				},
+				success: function (data) {
+					//alert(data);
+          $("#myModal").modal("hide");
+				},
+				error: function (data) {
+					alert(data);
+				}
+			})
+		});
   }
 
   function init() {
@@ -578,22 +617,25 @@ $(document).ready(function() {
   // Load a simple rectangle room
 
   var user = getCookie("account");
-  $.ajax({
-    method: "post",
-    url: "/newDesign",
-    data: {
-      account: user 
-    },
-    success: function (data) {
-      //console.log(data["file"]);
-      if (data["success"] == true)
-        blueprint3d.model.loadJSON(data["file"]);
-      else
-        alert(data["file"]);
-    },
-    error: function (data) {
-      console.log("GG");
-    }
-  })
+  if(user != "") {
+    $.ajax({
+        method: "post",
+        url: "/newDesign",
+        data: {
+            account: user 
+        },
+        success: function (data) {
+        //console.log(data["file"]);
+        if (data["success"] == true)
+            blueprint3d.model.loadJSON(data["file"]);
+        else
+            alert(data["file"]);
+        },
+        error: function (data) {
+            console.log("GG");
+        }
+    })
+  } else 
+    alert("Please Login First!");
   //blueprint3d.model.loadSerialized('{"floorplan":{"corners":{"f90da5e3-9e0e-eba7-173d-eb0b071e838e":{"x":204.85099999999989,"y":289.052},"da026c08-d76a-a944-8e7b-096b752da9ed":{"x":672.2109999999999,"y":289.052},"4e3d65cb-54c0-0681-28bf-bddcc7bdb571":{"x":672.2109999999999,"y":-178.308},"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2":{"x":204.85099999999989,"y":-178.308}},"walls":[{"corner1":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","corner2":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"f90da5e3-9e0e-eba7-173d-eb0b071e838e","corner2":"da026c08-d76a-a944-8e7b-096b752da9ed","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"da026c08-d76a-a944-8e7b-096b752da9ed","corner2":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}},{"corner1":"4e3d65cb-54c0-0681-28bf-bddcc7bdb571","corner2":"71d4f128-ae80-3d58-9bd2-711c6ce6cdf2","frontTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0},"backTexture":{"url":"rooms/textures/wallmap.png","stretch":true,"scale":0}}],"wallTextures":[],"floorTextures":{},"newFloorTextures":{}},"items":[]}');
 });

@@ -187,7 +187,7 @@ $(document).ready(function() {
   for (var i = 0; i < items.length; i++) {
     var item = items[i];
     var index = item.name.indexOf("_") + 1;
-    console.log(item.name);
+    //console.log(item.name);
     var html =  '<a class="thumbnail add-item" model-name="' + 
                 item.name + 
                 '" model-url="' +

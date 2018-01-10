@@ -20,30 +20,35 @@ app.use(bodyParser.urlencoded({
 
 httpsServer = https.createServer(credential, app)
 httpsServer.listen(port, function () {
-  console.log('listening on port 8181')
+  console.log('listening on port ' + port)
 })
 
 app.post("/newDesign", function (req, res) {
-  var account = req.body['account'];
-  Design.getDesign(account).then((design) => {
-    if (design === "House sold out!") {
-      res.send({
-        success: false,
-        file: design
-      })
-    } else {
-      res.send({
-        success: true,
-        file: JSON.parse(design)
-      })
+    var account = req.body['account'];
+    if(account === "")
+        res.send(404);
+    else {
+    Design.getDesign(account).then((design) => {
+        if (design === "House sold out!" || design === "Please Login First!") {
+            res.send({
+                success: false,
+                file: design
+            })
+        } else {
+            res.send({
+                success: true,
+                file: JSON.parse(design)
+            })
+        }
+    });
     }
-  });
 })
 
 app.post("/updateDesign", function (req, res) {
   var account = req.body['account'];
   var design = req.body['design'];
-  Design.saveDesign(account, design).then((result) => {
+  var pic = req.body['pic'];
+  Design.saveDesign(account, design, pic).then((result) => {
     res.send("Success!");
   }).catch((e) => {
     res.send("Fail!");
@@ -79,6 +84,14 @@ app.post("/deleteTags", function (req, res) {
   });
 })
 
+app.post("/search", function (req, res) {
+  var keyword = req.body['keyword'];
+  Design.search(keyword).then((result) => {
+    res.send(result);
+  }).catch((e) => {
+    res.send("Fail!");
+  });
+})
 
 app.post('/renew',function(req, res){
     MongoClient.connect(dbPath, function(err1, db1) {
