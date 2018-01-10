@@ -105,7 +105,7 @@ app.post('/renew',function(req, res){
                 var c_file=result1[0].community_file;//community's file info
                 var communityX = JSON.parse(result1[0].communityX);
                 var communityY = JSON.parse(result1[0].communityY);
-                var house_count = JSON.parse(result1[0].house_count);
+                var communitymaxY = JSON.parse(result1[0].communitymaxY);
                 var Group_obj = JSON.parse(c_file);
 
                 MongoClient.connect(dbPath, function(err3, db2) {
@@ -123,17 +123,13 @@ app.post('/renew',function(req, res){
                             for (i = 0; i < result2.length; ++i) {
                                 
                                 var design = JSON.parse(result2[i].design);
-                                var user_name
+                                var user_name = "user" + result2[i].design_id;
                                 
                                 var minX = 99999999
                                 var minY = 99999999
                                 var maxX = -99999999
                                 var maxY = -99999999
                                 
-                                for (j in design.floorplan.corners) {
-                                    user_name = j.split("_")[0]
-                                }
-
                                 for (j in Group_obj.floorplan.corners) {
                                     if (j.split("_")[0] == user_name)
                                         delete Group_obj.floorplan.corners[j]
@@ -148,8 +144,6 @@ app.post('/renew',function(req, res){
                                     }
                                 }
 
-                                if (design.items.length > 0)
-                                    user_name = design.items[0].item_name.split("_")[0]
                                 for (j = 0;; j++) {
                                     if (j == Group_obj.items.length)
                                         break
@@ -173,13 +167,21 @@ app.post('/renew',function(req, res){
                                 
                                 var rangeX = minX - communityX
                                 var rangeY = minY - communityY
-                               
+
                                 // Add corners
+                                for (j in design.floorplan.corners)
+                                    j = user_name + "_" + j;
+
                                 for (j in design.floorplan.corners) {
-                                    Group_obj.floorplan.corners[j] = {"x": design.floorplan.corners[j].x - rangeX, "y": design.floorplan.corners[j].y - rangeY}
+                                    Group_obj.floorplan.corners[user_name + "_" + j] = {"x": design.floorplan.corners[j].x - rangeX, "y": design.floorplan.corners[j].y - rangeY}
                                 }
                                 
                                 // Add walls
+                                for (j = 0; j < design.floorplan.walls.length; j++) {
+                                    design.floorplan.walls[j].corner1 = user_name + "_" + design.floorplan.walls[j].corner1
+                                    design.floorplan.walls[j].corner2 = user_name + "_" + design.floorplan.walls[j].corner2
+                                }
+
                                 for (j = 0; j < design.floorplan.walls.length; j++) {
                                     Group_obj.floorplan.walls.push(design.floorplan.walls[j])
                                 }
@@ -188,15 +190,18 @@ app.post('/renew',function(req, res){
                                 for (j = 0; j < design.items.length; ++j) {
                                     design.items[j].xpos = design.items[j].xpos - rangeX
                                     design.items[j].zpos = design.items[j].zpos - rangeY
+                                    design.items[j].item_name = user_name + "_" + design.items[j].item_name
                                 }
                                 for (j = 0; j < design.items.length; ++j) {
                                     Group_obj.items.push(design.items[j]);
                                 }
 
-                                communityX = communityX + (maxX - minX)
-                                house_count++
-                                if (house_count % 9 == 0) {
-                                    communityY = communityY + 600 + (maxY - minY)
+                                communityX = communityX + (maxX - minX) + 200
+                                if ((maxY - minY) > communitymaxY)
+                                    communitymaxY = maxY - minY
+
+                                if (communityX > 5000) {
+                                    communityY = communityY + 600 + communitymaxY
                                     communityX = 0
 
                                 }
@@ -214,7 +219,7 @@ app.post('/renew',function(req, res){
                             time = time.toJSON();
                             var set_time = {$set:{update_time: time}};
                             
-                            var set_xy = {$set:{communityX: communityX, communityY: communityY, house_count: house_count}};
+                            var set_xy = {$set:{communityX: communityX, communityY: communityY, communitymaxY: communitymaxY}};
                             
                             MongoClient.connect(dbPath, function(err5, db3) {
                                 if (err5) throw err5;
@@ -236,7 +241,7 @@ app.post('/renew',function(req, res){
                                     }
                                 )
                                 
-                                db3.collection("community_info").updateOne(//更新料庫中community_info的corner info
+                                db3.collection("community_info").updateOne(//更新料庫中community_info
                                     myquery,
                                     set_xy,
                                     function(err8, result5){
