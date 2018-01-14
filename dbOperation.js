@@ -229,7 +229,7 @@ function search (keyword) {
      
       db.collection("design_info").find({
         $or: [ { tag: { $regex: keyword }},
-               { design: { $regex: keyword }},
+               { design: { items: {$regex: keyword }}},
                { user_account: { $regex: keyword }}]  
       },{
         user_account: 1,

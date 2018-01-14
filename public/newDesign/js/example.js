@@ -540,6 +540,7 @@ var mainControls = function(blueprint3d) {
     $("#myModal").modal("show");
 
     var design = blueprint3d.model.exportSerialized();
+    console.log(design);
     var pic = blueprint3d.three.dataUrl().split(',')[1];
     console.log(pic);
     //console.log(design);

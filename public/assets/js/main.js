@@ -97,6 +97,12 @@ $("#community_btn").click(
     }
 )
 
+$("#search_btn").click(
+    function() { 
+        window.open("./searchPage/index.html");
+    }
+)
+
 $("#login_send").click(
     function() {
         if($('#login_account').val() != "" && $('#login_password').val() != "") {
