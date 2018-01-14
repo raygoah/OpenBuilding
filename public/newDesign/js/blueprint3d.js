@@ -3929,7 +3929,7 @@ var BP3D;
         Three.Skybox = function (scene) {
             var scope = this;
             var scene = scene;
-            var topColor = 0xffffff; //0xD8ECF9
+            var topColor = 0xF7D25F; //0xD8ECF9
             var bottomColor = 0xe9e9e9; //0xf9f9f9;//0x565e63
             var verticalOffset = 500;
             var sphereRadius = 4000000;
@@ -3954,7 +3954,7 @@ var BP3D;
                 "}"
             ].join('\n');
             function init() {
-                var uniforms = {
+            	var uniforms = {
                     topColor: {
                         type: "c",
                         value: new THREE.Color(topColor)
@@ -3968,16 +3968,15 @@ var BP3D;
                         value: verticalOffset
                     }
                 };
-           		var loader = new THREE.TextureLoader();
-                loader.load('./background.jpg', function (texture) {
-                    var materials = new THREE.MeshBasicMaterial({
-                        map: texture, side: THREE.BackSide
-                    });
-                    var material = new THREE.MeshFaceMaterial([materials, materials, materials, materials, materials, materials]);
-                    var skyGeo = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
-                    var sky = new THREE.Mesh(skyGeo, material);
-                    scene.add(sky);
-                }); 
+                var skyGeo = new THREE.SphereGeometry(sphereRadius, widthSegments, heightSegments);
+                var skyMat = new THREE.ShaderMaterial({                    
+                    vertexShader: vertexShader,
+                    fragmentShader: fragmentShader,
+                    uniforms: uniforms,
+                    side: THREE.BackSide
+                });
+                var sky = new THREE.Mesh(skyGeo, skyMat);
+                scene.add(sky);
             }
             init();
         };
