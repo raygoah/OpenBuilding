@@ -321,12 +321,14 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
     if (currentState.tab !== newState.tab) {
       if (currentState.tab != null) {
         currentState.tab.removeClass(ACTIVE_CLASS);          
+        if (currentState == scope.states.TAG || currentState == scope.states.SHOP) 
+          scope.states.DEFAULT.div.hide();
       }
-      if (newState.tab != null) {
+      if (newState.tab != null && 
+          (currentState != scope.states.TAG || currentState != scope.states.SHOP)) {
         newState.tab.addClass(ACTIVE_CLASS);
       }
     }
-
     // set item unselected
     blueprint3d.three.getController().setSelectedObject(null);
 
@@ -334,8 +336,7 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
     currentState.div.hide()
 
     // show design when adding items
-    if (newState == scope.states.SHOP ||
-        newState == scope.states.TAG) {
+    if (newState == scope.states.SHOP || newState == scope.states.TAG) {
       scope.states.DEFAULT.div.show()
     }
     newState.div.show()
@@ -355,6 +356,10 @@ var SideMenu = function(blueprint3d, floorplanControls, modalEffects) {
     }
 
     if (newState == scope.states.SHOP) {
+        blueprint3d.three.updateWindowSize();
+    }
+
+    if (newState == scope.states.TAG) {
         blueprint3d.three.updateWindowSize();
     }
 
