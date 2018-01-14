@@ -218,6 +218,12 @@ $(document).ready(function() {
       "image" : "models/thumbnails/thumbnail_dresser.jpg",
       "model" : "models/js/Dresser.js",
       "type" : "1"
+    },
+    {
+      "name" : user + "_Vacuum",
+      "image" : "models/thumbnails/thumbnail_vacuum.png",
+      "model" : "models/js/wetvac.js",
+      "type" : "1"
     }
    /*     
    {
