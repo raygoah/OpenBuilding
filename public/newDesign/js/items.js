@@ -170,6 +170,60 @@ $(document).ready(function() {
       "image" : "models/thumbnails/thumbnail_nyc2.jpg",
       "model" : "models/js/nyc-poster2.js",
       "type" : "2"
+    },
+    {
+      "name" : user + "_Clock",
+      "image" : "models/thumbnails/thumbnail_clock.jpg",
+      "model" : "models/js/Pendule.js",
+      "type" : "2"
+    },
+    {
+      "name" : user + "_Toilet",
+      "image" : "models/thumbnails/thumbnail_toilet.jpg",
+      "model" : "models/js/Toilet.js",
+      "type" : "1"
+    },
+    {
+      "name" : user + "_Sink",
+      "image" : "models/thumbnails/thumbnail_bathroom-sink-63320.jpg",
+      "model" : "models/js/Sink.js",
+      "type" : "1"
+    },
+    {
+      "name" : user + "_House plant",
+      "image" : "models/thumbnails/thumbnail_house_plant.jpg",
+      "model" : "models/js/eb_house_plant_01.js",
+      "type" : "1"
+    },
+    {
+      "name" : user + "_Bed",
+      "image" : "models/thumbnails/thumbnail_bed.png",
+      "model" : "models/js/bed.js",
+      "type" : "1"
+    },
+    {
+      "name" : user + "_DesignChair",
+      "image" : "models/thumbnails/thumbnail_DesignChair.png",
+      "model" : "models/js/DesignChair.js",
+      "type" : "1"
+    },
+    {
+      "name" : user + "_Shower",
+      "image" : "models/thumbnails/thumbnail_mirashower.jpg",
+      "model" : "models/js/mirashower.js",
+      "type" : "2"
+    },
+    {
+      "name" : user + "_Dresser",
+      "image" : "models/thumbnails/thumbnail_dresser.jpg",
+      "model" : "models/js/Dresser.js",
+      "type" : "1"
+    },
+    {
+      "name" : user + "_Vacuum",
+      "image" : "models/thumbnails/thumbnail_vacuum.png",
+      "model" : "models/js/wetvac.js",
+      "type" : "1"
     }
    /*     
    {
